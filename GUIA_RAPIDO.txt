@@ -1,0 +1,140 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                GUIA RÁPIDO - STUDIO DE UNHAS                      ║
+║              Sistema de Gerenciamento Completo                    ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📋 INSTALAÇÃO RÁPIDA
+═══════════════════════════════════════════════════════════════════
+
+1. Abra o PowerShell/CMD na pasta do projeto
+2. Execute os comandos abaixo em ordem:
+
+   composer install
+   php artisan key:generate
+   php artisan migrate
+   php artisan db:seed
+   php artisan serve
+
+3. Acesse: http://localhost:8000
+
+🔑 CREDENCIAIS
+═══════════════════════════════════════════════════════════════════
+
+ADMINISTRADOR:
+- Email: admin@studiounhas.com
+- Senha: admin123
+- Acesso: http://localhost:8000/admin
+
+CLIENTE TESTE:
+- Email: maria@example.com
+- Senha: senha123
+
+🌐 PRINCIPAIS URLs
+═══════════════════════════════════════════════════════════════════
+
+Página Inicial:        http://localhost:8000
+Fazer Agendamento:     http://localhost:8000/agendar
+Login:                 http://localhost:8000/login
+Painel Admin:          http://localhost:8000/admin
+
+📊 FUNCIONALIDADES DO SISTEMA
+═══════════════════════════════════════════════════════════════════
+
+ÁREA PÚBLICA:
+✓ Visualização de serviços com preços
+✓ Sistema de agendamento online
+✓ Verificação de horários disponíveis
+✓ Cadastro de clientes
+
+PAINEL ADMINISTRATIVO:
+✓ Dashboard com estatísticas
+✓ Gerenciamento de Serviços
+✓ Gerenciamento de Agendamentos
+✓ Controle de Estoque
+✓ Fluxo de Caixa (Entradas/Saídas)
+✓ Fechamento Diário de Caixa
+
+🛠️ COMANDOS ÚTEIS
+═══════════════════════════════════════════════════════════════════
+
+Iniciar servidor:
+  php artisan serve
+
+Limpar cache:
+  php artisan cache:clear
+
+Ver rotas:
+  php artisan route:list
+
+Resetar banco (APAGA TUDO!):
+  php artisan migrate:fresh --seed
+
+⚙️ CONFIGURAÇÃO DO BANCO
+═══════════════════════════════════════════════════════════════════
+
+Banco: studio_unhas
+Host: 127.0.0.1
+Usuário: root
+Senha: (vazia por padrão)
+
+📁 ESTRUTURA DE PASTAS IMPORTANTE
+═══════════════════════════════════════════════════════════════════
+
+app/Http/Controllers/     - Lógica do sistema
+app/Models/              - Modelos do banco de dados
+database/migrations/     - Estrutura das tabelas
+database/seeders/        - Dados iniciais
+resources/views/         - Interface (HTML/Blade)
+routes/web.php          - Todas as rotas do sistema
+
+🎨 PERSONALIZAÇÃO
+═══════════════════════════════════════════════════════════════════
+
+O sistema usa Tailwind CSS para estilização.
+Para mudar cores/estilos, edite os arquivos em:
+resources/views/
+
+Cores principais usadas:
+- Rosa/Pink: Tema principal
+- Verde: Entradas/Sucesso
+- Vermelho: Saídas/Alertas
+- Azul: Informações
+
+❓ PROBLEMAS COMUNS
+═══════════════════════════════════════════════════════════════════
+
+Erro "Class not found":
+  → Execute: composer install
+
+Erro de banco de dados:
+  → Crie o banco 'studio_unhas' no phpMyAdmin
+  → Verifique as credenciais no arquivo .env
+
+Erro 500:
+  → Verifique: storage/logs/laravel.log
+
+Página em branco:
+  → Execute: php artisan key:generate
+
+🚀 DADOS PRÉ-CARREGADOS
+═══════════════════════════════════════════════════════════════════
+
+O sistema já vem com:
+- 10 serviços cadastrados (manicure, pedicure, alongamentos, etc.)
+- 15 produtos em estoque
+- 2 usuários de teste (1 admin + 1 cliente)
+
+📞 HORÁRIO DE FUNCIONAMENTO
+═══════════════════════════════════════════════════════════════════
+
+Dias: Segunda a Sábado
+Horário: 9h às 18h
+Intervalo: Agendamentos a cada 30 minutos
+
+═══════════════════════════════════════════════════════════════════
+        Desenvolvido com Laravel 10 + MySQL + Tailwind CSS
+═══════════════════════════════════════════════════════════════════
+
+
+
+

@@ -1,0 +1,93 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║            COMO EXECUTAR O SISTEMA - SUPER FÁCIL!                 ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+🎯 FORMA MAIS FÁCIL - USE OS ARQUIVOS .BAT
+═══════════════════════════════════════════════════════════════════
+
+1️⃣  INICIAR O SISTEMA
+    
+    Dê 2 cliques em: iniciar.bat
+    
+    Ou no PowerShell digite: .\iniciar.bat
+    
+    → Isso vai iniciar o servidor automaticamente!
+    → Acesse: http://localhost:8000
+
+
+2️⃣  MENU COM VÁRIOS COMANDOS
+    
+    Dê 2 cliques em: comandos-uteis.bat
+    
+    → Menu interativo com todas as opções:
+      - Iniciar servidor
+      - Criar tabelas
+      - Popular dados
+      - Limpar cache
+      - Ver rotas
+
+
+3️⃣  CONFIGURAR PHP PERMANENTEMENTE (Opcional)
+    
+    1. Clique com BOTÃO DIREITO em: configurar-php.bat
+    2. Escolha "Executar como administrador"
+    3. Depois disso, você pode usar 'php' em qualquer lugar!
+    
+    ⚠️ Precisa ser executado como ADMINISTRADOR!
+
+═══════════════════════════════════════════════════════════════════
+📋 RESUMO DOS ARQUIVOS
+═══════════════════════════════════════════════════════════════════
+
+📄 iniciar.bat
+   → Inicia o servidor com um duplo clique
+   
+📄 comandos-uteis.bat
+   → Menu com todos os comandos úteis
+   
+📄 configurar-php.bat
+   → Configura PHP permanentemente (rodar como admin)
+
+═══════════════════════════════════════════════════════════════════
+🔑 CREDENCIAIS DE ACESSO
+═══════════════════════════════════════════════════════════════════
+
+ADMINISTRADOR:
+  Email: admin@studiounhas.com
+  Senha: admin123
+
+CLIENTE DE TESTE:
+  Email: maria@example.com
+  Senha: senha123
+
+═══════════════════════════════════════════════════════════════════
+🌐 URLs DO SISTEMA
+═══════════════════════════════════════════════════════════════════
+
+Página Inicial:     http://localhost:8000
+Login:              http://localhost:8000/login
+Painel Admin:       http://localhost:8000/admin
+
+═══════════════════════════════════════════════════════════════════
+❓ PROBLEMAS COMUNS
+═══════════════════════════════════════════════════════════════════
+
+❌ "php não é reconhecido"
+   → Use o arquivo iniciar.bat ou comandos-uteis.bat
+
+❌ Erro de banco de dados
+   → Certifique-se que criou o banco 'studio_unhas' no phpMyAdmin
+   → Use comandos-uteis.bat > opção 3 para criar as tabelas
+
+❌ Página em branco
+   → Use comandos-uteis.bat > opção 4 para limpar o cache
+
+═══════════════════════════════════════════════════════════════════
+
+✨ PRONTO! Agora é só usar os arquivos .bat! ✨
+
+═══════════════════════════════════════════════════════════════════
+
+
+
+
