@@ -16,12 +16,12 @@
             --text-dark: #374151;
             --text-medium: #6B7280;
             --text-light: #9CA3AF;
-            --sidebar-bg: #8B5CF6;
-            --sidebar-bg-gradient: linear-gradient(135deg, #8B5CF6 0%, #6B46C1 100%);
-            --sidebar-text: #FFFFFF;
-            --sidebar-hover: rgba(255, 255, 255, 0.2);
-            --sidebar-hover-text: #FFFFFF;
-            --sidebar-active: rgba(255, 255, 255, 0.3);
+            --sidebar-bg: #F8FAFC;
+            --sidebar-bg-gradient: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+            --sidebar-text: #475569;
+            --sidebar-hover: rgba(148, 163, 184, 0.1);
+            --sidebar-hover-text: #1E293B;
+            --sidebar-active: rgba(139, 92, 246, 0.1);
         }
 
         body {
@@ -33,28 +33,36 @@
         .admin-sidebar {
             background: var(--sidebar-bg-gradient);
             color: var(--sidebar-text);
-            border-radius: 0 1.5rem 1.5rem 0;
-            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.1), 0 10px 10px -5px rgba(139, 92, 246, 0.04);
+            border-right: 1px solid #E2E8F0;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 40;
         }
 
         .admin-sidebar .sidebar-header {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            border-radius: 1rem;
-            margin: 1.5rem;
-            padding: 1.5rem;
+            background: white;
+            border-radius: 0.75rem;
+            margin: 1rem;
+            padding: 1rem;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid #E2E8F0;
         }
 
         .admin-sidebar .sidebar-logo {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 0.5rem;
+            color: #8B5CF6;
         }
 
         .admin-sidebar .sidebar-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            color: #475569;
         }
 
         .admin-sidebar .nav-section {
@@ -88,36 +96,37 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.875rem 1rem;
+            padding: 0.625rem 0.875rem;
             color: var(--sidebar-text);
             text-decoration: none;
             font-weight: 500;
-            border-radius: 0.75rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.8125rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
         .admin-sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+            background: var(--sidebar-hover);
+            color: var(--sidebar-hover-text);
         }
 
         .admin-sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: var(--sidebar-active);
+            color: #8B5CF6;
+            font-weight: 600;
         }
 
-        .admin-sidebar .nav-link.active::after {
+        .admin-sidebar .nav-link.active::before {
             content: '';
             position: absolute;
-            right: 0;
+            left: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 4px;
-            height: 60%;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 2px 0 0 2px;
+            width: 3px;
+            height: 70%;
+            background: #8B5CF6;
+            border-radius: 0 2px 2px 0;
         }
 
         /* Responsividade para mobile */
@@ -142,20 +151,21 @@
             }
 
         .admin-sidebar .nav-icon {
-            width: 1.25rem;
-            height: 1.25rem;
+            width: 1rem;
+            height: 1rem;
             flex-shrink: 0;
+            font-size: 0.875rem;
         }
 
         .admin-sidebar .nav-text {
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             font-weight: 500;
         }
 
         .admin-sidebar .nav-separator {
             height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-            margin: 1rem 1.5rem;
+            background: #E2E8F0;
+            margin: 0.75rem 1rem;
             border-radius: 1px;
         }
 
@@ -232,15 +242,8 @@
 <body class="bg-white text-[#374151]">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <div class="admin-sidebar w-64 min-h-screen flex flex-col absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-all duration-300 ease-in-out shadow-2xl">
+        <div class="admin-sidebar w-64 flex flex-col">
 
-            <!-- Header do Sidebar -->
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="fas fa-spa text-white"></i>
-                </div>
-                <div class="sidebar-title text-white">Admin Panel</div>
-            </div>
 
             <!-- Menu Principal -->
             <nav class="flex-1 px-4">
@@ -335,7 +338,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden ml-64">
             <!-- Top bar -->
             <header class="bg-white shadow">
                 <div class="px-6 py-4 flex flex-col gap-3">
