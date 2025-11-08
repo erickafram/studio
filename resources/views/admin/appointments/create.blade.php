@@ -3,7 +3,7 @@
 @section('page-title', 'Novo Agendamento')
 
 @section('content')
-<div class="max-w-4xl">
+<div class="max-w-7xl mx-auto">
     <div class="rounded-3xl border border-[#8B5CF6]/40 bg-white p-6 shadow-lg shadow-[#8B5CF6]/20">
         <form method="POST" action="{{ route('admin.appointments.store') }}" id="appointment-form">
             @csrf
