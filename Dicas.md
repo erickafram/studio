@@ -16,7 +16,7 @@ git pull origin main
 # O .env não será alterado porque está no .gitignore
 
 # Atualizar dependências se necessário
-composer install --optimize-autoloader --no-dev
+# composer install --optimize-autoloader --no-dev
 
 #RUN BUILD
 npm run build
@@ -25,7 +25,6 @@ npm run build
 php artisan migrate --force
 
 # Limpar e recriar cache
-php artisan optimize
 php artisan optimize:clear
 php artisan config:clear
 php artisan cache:clear
