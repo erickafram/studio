@@ -3,7 +3,7 @@
 @section('title', 'Agendar Serviço - Studio de Unhas')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white rounded-2xl shadow-xl p-8 border border-purple-100">
         <h2 class="text-3xl font-bold text-slate-900 mb-6 text-center">
             <i class="fas fa-calendar-plus text-purple-600"></i> Agendar Serviço

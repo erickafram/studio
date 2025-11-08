@@ -3,7 +3,7 @@
 @section('page-title', 'Editar Serviço')
 
 @section('content')
-<div class="max-w-3xl">
+<div class="max-w-8xl">
     <div class="bg-white rounded-lg shadow-md p-6">
         <form method="POST" action="{{ route('admin.services.update', $service) }}">
             @csrf

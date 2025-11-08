@@ -3,7 +3,7 @@
 @section('page-title', 'Novo Serviço')
 
 @section('content')
-    <div class="max-w-3xl">
+    <div class="max-w-8xl">
         <div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-6">
             <form method="POST" action="{{ route('admin.services.store') }}">
                 @csrf
