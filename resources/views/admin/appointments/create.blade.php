@@ -33,6 +33,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-[#6B7280] uppercase mb-2">Telefone</label>
                     <input type="text" name="client_phone" id="client_phone" value="{{ old('client_phone') }}"
+                           placeholder="(99) 99999-9999"
                            class="w-full rounded-lg border border-[#8B5CF6]/40 px-3 py-2 text-sm focus:border-[#7C3AED] focus:ring-[#C4B5FD]/30">
                 </div>
             </div>
@@ -44,15 +45,23 @@
                            class="w-full rounded-lg border border-[#8B5CF6]/40 px-3 py-2 text-sm focus:border-[#7C3AED] focus:ring-[#C4B5FD]/30" placeholder="Opcional">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-[#6B7280] uppercase mb-2">Serviço *</label>
-                    <select name="service_id" id="service_id" class="w-full rounded-lg border border-[#8B5CF6]/40 px-3 py-2 text-sm focus:border-[#7C3AED] focus:ring-[#C4B5FD]/30" required>
-                        <option value="">Selecione</option>
+                    <label class="block text-xs font-semibold text-[#6B7280] uppercase mb-2">Serviços *</label>
+                    <div class="space-y-2 max-h-48 overflow-y-auto border border-[#8B5CF6]/40 rounded-lg p-3">
                         @foreach($services as $service)
-                            <option value="{{ $service->id }}" {{ old('service_id') == $service->id ? 'selected' : '' }}>
-                                {{ $service->name }} - R$ {{ number_format($service->price, 2, ',', '.') }}
-                            </option>
+                            <label class="flex items-center gap-3 p-2 hover:bg-purple-50 rounded-lg cursor-pointer transition">
+                                <input type="checkbox" name="service_ids[]" value="{{ $service->id }}" 
+                                       {{ is_array(old('service_ids')) && in_array($service->id, old('service_ids')) ? 'checked' : '' }}
+                                       class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-900 text-sm">{{ $service->name }}</div>
+                                    <div class="text-xs text-gray-600">
+                                        R$ {{ number_format($service->price, 2, ',', '.') }} • {{ $service->duration_minutes }}min
+                                    </div>
+                                </div>
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Selecione um ou mais serviços</p>
                 </div>
             </div>
 
@@ -158,6 +167,18 @@
         if (!userSearchInput.contains(event.target) && !userSuggestions.contains(event.target)) {
             userSuggestions.classList.add('hidden');
         }
+    });
+
+    // Máscara de telefone
+    phoneInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length <= 11) {
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+        }
+        
+        e.target.value = value;
     });
 </script>
 @endpush
