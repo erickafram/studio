@@ -9,7 +9,7 @@
 }">
     
     <!-- Sidebar Esquerda - Calendário + Filtros -->
-    <div class="lg:w-80 flex-shrink-0 space-y-4">
+    <div class="lg:w-64 flex-shrink-0 space-y-4">
         
         <!-- Calendário Mensal -->
         <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
