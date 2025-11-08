@@ -25,5 +25,9 @@ npm run build
 php artisan migrate --force
 
 # Limpar e recriar cache
-php artisan optimize:clear
 php artisan optimize
+php artisan optimize:clear
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear

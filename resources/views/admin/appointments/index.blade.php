@@ -158,8 +158,8 @@
             </div>
         </div>
 
-        <!-- Grade de Horários -->
-        <div class="flex-1 overflow-y-auto p-4">
+        <!-- Grade de Horários - Desktop -->
+        <div class="hidden md:block flex-1 overflow-y-auto p-4">
             <div class="space-y-2">
                 @foreach($timeSlots as $time)
                     @php
@@ -248,6 +248,81 @@
                     </div>
                 @endforeach
             </div>
+        </div>
+
+        <!-- Lista Compacta - Mobile -->
+        <div class="md:hidden flex-1 overflow-y-auto p-3">
+            @if($appointments->isEmpty())
+                <div class="text-center py-8">
+                    <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-gray-500 text-sm mb-4">Nenhum agendamento neste dia</p>
+                    <a href="{{ route('admin.appointments.create') }}?date={{ $selectedDate->format('Y-m-d') }}" 
+                       class="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                        <i class="fas fa-plus"></i>
+                        Novo Agendamento
+                    </a>
+                </div>
+            @else
+                <div class="space-y-3">
+                    @foreach($appointments as $appointment)
+                        @php
+                            $statusColors = [
+                                'pendente' => 'bg-yellow-50 border-yellow-400',
+                                'confirmado' => 'bg-blue-50 border-blue-500',
+                                'concluido' => 'bg-green-50 border-green-500',
+                                'cancelado' => 'bg-red-50 border-red-500',
+                            ];
+                            $statusDotColors = [
+                                'pendente' => 'bg-yellow-400',
+                                'confirmado' => 'bg-blue-500',
+                                'concluido' => 'bg-green-500',
+                                'cancelado' => 'bg-red-500',
+                            ];
+                        @endphp
+                        
+                        <div class="border-l-4 rounded-lg p-3 {{ $statusColors[$appointment->status] }}"
+                             onclick="window.location.href='{{ route('admin.appointments.edit', $appointment) }}'">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full {{ $statusDotColors[$appointment->status] }}"></div>
+                                    <span class="font-bold text-gray-900 text-sm">{{ substr($appointment->appointment_time, 0, 5) }}</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                    {{ $appointment->status === 'pendente' ? 'bg-yellow-200 text-yellow-800' : '' }}
+                                    {{ $appointment->status === 'confirmado' ? 'bg-blue-200 text-blue-800' : '' }}
+                                    {{ $appointment->status === 'concluido' ? 'bg-green-200 text-green-800' : '' }}
+                                    {{ $appointment->status === 'cancelado' ? 'bg-red-200 text-red-800' : '' }}">
+                                    {{ $statusOptions[$appointment->status] }}
+                                </span>
+                            </div>
+                            
+                            <p class="font-bold text-gray-900 mb-1">{{ $appointment->client_name }}</p>
+                            <p class="text-sm text-gray-700 mb-2">
+                                <i class="fas fa-spa text-purple-500 mr-1"></i>
+                                {{ $appointment->service->name }}
+                            </p>
+                            
+                            <div class="flex items-center gap-3 text-xs text-gray-600">
+                                <span>
+                                    <i class="fas fa-phone mr-1"></i>
+                                    {{ $appointment->client_phone }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    {{ $appointment->service->duration_minutes }}min
+                                </span>
+                            </div>
+                            
+                            @if($appointment->notes)
+                                <p class="text-xs text-gray-600 mt-2 italic border-t border-gray-200 pt-2">
+                                    <i class="fas fa-comment-dots mr-1"></i>
+                                    {{ $appointment->notes }}
+                                </p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 </div>
