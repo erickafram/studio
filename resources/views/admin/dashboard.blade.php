@@ -3,42 +3,42 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
     <!-- Card: Receita Hoje -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center">
-            <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
-                <i class="fas fa-dollar-sign text-white text-2xl"></i>
+    <div class="bg-white rounded-lg shadow-md p-3 md:p-6">
+        <div class="flex flex-col md:flex-row items-center md:items-start">
+            <div class="flex-shrink-0 bg-green-500 rounded-md p-2 md:p-3 mb-2 md:mb-0">
+                <i class="fas fa-dollar-sign text-white text-lg md:text-2xl"></i>
             </div>
-            <div class="ml-4">
-                <p class="text-sm text-[#6B6B6B]">Receita Hoje</p>
-                <p class="text-2xl font-bold text-[#3A3A3A]">R$ {{ number_format($todayRevenue, 2, ',', '.') }}</p>
+            <div class="md:ml-4 text-center md:text-left">
+                <p class="text-xs md:text-sm text-[#6B6B6B]">Receita Hoje</p>
+                <p class="text-base md:text-2xl font-bold text-[#3A3A3A]">R$ {{ number_format($todayRevenue, 2, ',', '.') }}</p>
             </div>
         </div>
     </div>
 
     <!-- Card: Despesas Hoje -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center">
-            <div class="flex-shrink-0 bg-red-500 rounded-md p-3">
-                <i class="fas fa-money-bill-wave text-white text-2xl"></i>
+    <div class="bg-white rounded-lg shadow-md p-3 md:p-6">
+        <div class="flex flex-col md:flex-row items-center md:items-start">
+            <div class="flex-shrink-0 bg-red-500 rounded-md p-2 md:p-3 mb-2 md:mb-0">
+                <i class="fas fa-money-bill-wave text-white text-lg md:text-2xl"></i>
             </div>
-            <div class="ml-4">
-                <p class="text-sm text-[#6B6B6B]">Despesas Hoje</p>
-                <p class="text-2xl font-bold text-[#3A3A3A]">R$ {{ number_format($todayExpenses, 2, ',', '.') }}</p>
+            <div class="md:ml-4 text-center md:text-left">
+                <p class="text-xs md:text-sm text-[#6B6B6B]">Despesas Hoje</p>
+                <p class="text-base md:text-2xl font-bold text-[#3A3A3A]">R$ {{ number_format($todayExpenses, 2, ',', '.') }}</p>
             </div>
         </div>
     </div>
 
     <!-- Card: Receita Mensal -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center">
-            <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                <i class="fas fa-chart-line text-white text-2xl"></i>
+    <div class="bg-white rounded-lg shadow-md p-3 md:p-6 col-span-2 lg:col-span-1">
+        <div class="flex flex-col md:flex-row items-center md:items-start">
+            <div class="flex-shrink-0 bg-blue-500 rounded-md p-2 md:p-3 mb-2 md:mb-0">
+                <i class="fas fa-chart-line text-white text-lg md:text-2xl"></i>
             </div>
-            <div class="ml-4">
-                <p class="text-sm text-gray-600">Receita Mensal</p>
-                <p class="text-2xl font-bold text-gray-800">R$ {{ number_format($monthRevenue, 2, ',', '.') }}</p>
+            <div class="md:ml-4 text-center md:text-left">
+                <p class="text-xs md:text-sm text-gray-600">Receita Mensal</p>
+                <p class="text-base md:text-2xl font-bold text-gray-800">R$ {{ number_format($monthRevenue, 2, ',', '.') }}</p>
                 <p class="text-xs text-gray-500">Saídas: R$ {{ number_format($monthExpenses, 2, ',', '.') }}</p>
                 <p class="text-xs font-semibold {{ $monthBalance >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
                     Saldo: R$ {{ number_format($monthBalance, 2, ',', '.') }}
@@ -48,28 +48,66 @@
     </div>
 
     <!-- Card: Agendamentos Pendentes -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center">
-            <div class="flex-shrink-0 bg-[#E8B4D9] rounded-md p-3">
-                <i class="fas fa-clock text-white text-2xl"></i>
+    <div class="bg-white rounded-lg shadow-md p-3 md:p-6 col-span-2 lg:col-span-1">
+        <div class="flex flex-col md:flex-row items-center md:items-start">
+            <div class="flex-shrink-0 bg-[#E8B4D9] rounded-md p-2 md:p-3 mb-2 md:mb-0">
+                <i class="fas fa-clock text-white text-lg md:text-2xl"></i>
             </div>
-            <div class="ml-4">
-                <p class="text-sm text-[#6B6B6B]">Pendentes</p>
-                <p class="text-2xl font-bold text-[#3A3A3A]">{{ $pendingAppointments }}</p>
+            <div class="md:ml-4 text-center md:text-left">
+                <p class="text-xs md:text-sm text-[#6B6B6B]">Pendentes</p>
+                <p class="text-base md:text-2xl font-bold text-[#3A3A3A]">{{ $pendingAppointments }}</p>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Agendamentos de Hoje -->
-<div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-6 mb-6">
-    <h3 class="text-xl font-bold text-[#3A3A3A] mb-4">
+<div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-4 md:p-6 mb-6">
+    <h3 class="text-lg md:text-xl font-bold text-[#3A3A3A] mb-4">
         <i class="fas fa-calendar-day text-[#D89FC4] mr-2"></i> Agendamentos de Hoje
     </h3>
     @if($todayAppointments->isEmpty())
         <p class="text-[#6B6B6B]">Nenhum agendamento para hoje.</p>
     @else
-        <div class="overflow-x-auto">
+        <!-- Mobile View - Cards -->
+        <div class="md:hidden space-y-3">
+            @foreach($todayAppointments as $appointment)
+                <div class="border border-[#E8B4D9]/30 rounded-lg p-3 hover:bg-[#FAE8F5]/30">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="font-bold text-[#3A3A3A]">{{ $appointment->client_name }}</p>
+                            <p class="text-sm text-[#6B6B6B]">{{ $appointment->service->name }}</p>
+                        </div>
+                        <span class="text-lg font-bold text-purple-600">{{ substr($appointment->appointment_time, 0, 5) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <p class="text-xs text-[#6B6B6B]">
+                            <i class="fas fa-phone mr-1"></i>{{ $appointment->client_phone }}
+                        </p>
+                        @if($appointment->status === 'pendente')
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#FAE8F5] text-[#D89FC4]">
+                                Pendente
+                            </span>
+                        @elseif($appointment->status === 'confirmado')
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                Confirmado
+                            </span>
+                        @elseif($appointment->status === 'concluido')
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Concluído
+                            </span>
+                        @else
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                Cancelado
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Desktop View - Table -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="min-w-full divide-y divide-[#E8B4D9]/20">
                 <thead class="bg-[#FAE8F5]">
                     <tr>
@@ -122,52 +160,52 @@
     @endif
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
     <!-- Próximos Agendamentos -->
-    <div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-6">
-        <h3 class="text-xl font-bold text-[#3A3A3A] mb-4">
+    <div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-4 md:p-6">
+        <h3 class="text-lg md:text-xl font-bold text-[#3A3A3A] mb-4">
             <i class="fas fa-calendar-alt text-[#D89FC4] mr-2"></i> Próximos Agendamentos
         </h3>
         @if($upcomingAppointments->isEmpty())
-            <p class="text-[#6B6B6B]">Nenhum agendamento próximo.</p>
+            <p class="text-[#6B6B6B] text-sm">Nenhum agendamento próximo.</p>
         @else
             <div class="space-y-3">
                 @foreach($upcomingAppointments as $appointment)
-                    <div class="border-l-4 border-[#D89FC4] pl-4 py-2">
-                        <p class="font-semibold text-[#3A3A3A]">{{ $appointment->client_name }}</p>
-                        <p class="text-sm text-[#6B6B6B]">{{ $appointment->service->name }}</p>
-                        <p class="text-sm text-[#9B9B9B]">
+                    <div class="border-l-4 border-[#D89FC4] pl-3 md:pl-4 py-2">
+                        <p class="font-semibold text-[#3A3A3A] text-sm md:text-base">{{ $appointment->client_name }}</p>
+                        <p class="text-xs md:text-sm text-[#6B6B6B]">{{ $appointment->service->name }}</p>
+                        <p class="text-xs md:text-sm text-[#9B9B9B]">
                             {{ $appointment->appointment_date->format('d/m/Y') }} às {{ substr($appointment->appointment_time, 0, 5) }}
                         </p>
                     </div>
                 @endforeach
             </div>
         @endif
-        <a href="{{ route('admin.appointments.index') }}" class="mt-4 block text-center text-[#D89FC4] hover:text-[#C88AB3] font-semibold transition">
+        <a href="{{ route('admin.appointments.index') }}" class="mt-4 block text-center text-[#D89FC4] hover:text-[#C88AB3] font-semibold transition text-sm">
             Ver todos os agendamentos →
         </a>
     </div>
 
     <!-- Produtos com Estoque Baixo -->
-    <div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-6">
-        <h3 class="text-xl font-bold text-[#3A3A3A] mb-4">
+    <div class="bg-white rounded-lg shadow-lg border border-[#E8B4D9]/30 p-4 md:p-6">
+        <h3 class="text-lg md:text-xl font-bold text-[#3A3A3A] mb-4">
             <i class="fas fa-exclamation-triangle text-[#D89FC4] mr-2"></i> Estoque Baixo
         </h3>
         @if($lowStockItems->isEmpty())
-            <p class="text-[#6B6B6B]">Todos os produtos estão com estoque adequado.</p>
+            <p class="text-[#6B6B6B] text-sm">Todos os produtos estão com estoque adequado.</p>
         @else
             <div class="space-y-3">
                 @foreach($lowStockItems as $item)
-                    <div class="border-l-4 border-red-500 pl-4 py-2">
-                        <p class="font-semibold text-[#3A3A3A]">{{ $item->product_name }}</p>
-                        <p class="text-sm text-red-600">
+                    <div class="border-l-4 border-red-500 pl-3 md:pl-4 py-2">
+                        <p class="font-semibold text-[#3A3A3A] text-sm md:text-base">{{ $item->product_name }}</p>
+                        <p class="text-xs md:text-sm text-red-600">
                             Quantidade: {{ $item->quantity }} (Mínimo: {{ $item->minimum_quantity }})
                         </p>
                     </div>
                 @endforeach
             </div>
         @endif
-        <a href="{{ route('admin.stock.index') }}" class="mt-4 block text-center text-[#D89FC4] hover:text-[#C88AB3] font-semibold transition">
+        <a href="{{ route('admin.stock.index') }}" class="mt-4 block text-center text-[#D89FC4] hover:text-[#C88AB3] font-semibold transition text-sm">
             Gerenciar estoque →
         </a>
     </div>

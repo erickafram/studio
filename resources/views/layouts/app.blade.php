@@ -4,187 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Studio de Unhas')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        :root {
-            color-scheme: light;
-            --purple-dark: #5B21B6;
-            --purple-darker: #4C1D95;
-            --purple-medium: #7C3AED;
-            --purple-light: #A78BFA;
-            --pink-medium: #EC4899;
-            --pink-light: #F472B6;
-            --text-dark: #1F2937;
-            --text-medium: #4B5563;
-            --text-light: #6B7280;
-            --header-bg: #5B21B6;
-            --footer-bg: #F8FAFC;
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-
-        body {
-            background-color: #FFFFFF;
-            color: var(--text-dark);
-        }
-
-        /* Main Layout Variables - CENTRALIZE TODAS AS CORES AQUI! */
-        .main-header {
-            background: var(--header-bg);
-        }
-
-        .main-footer {
-            background: var(--footer-bg);
-        }
-
-        .nav-link {
-            color: white;
-            transition: all 0.2s ease;
-        }
-
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        /* EXEMPLOS DE USO:
-         * Para alterar cores do header: modifique --header-bg
-         * Para alterar cores do footer: modifique --footer-bg
-         * Para alterar cores dos links: modifique as propriedades .nav-link
-         */
     </style>
 </head>
-<body class="min-h-screen font-sans text-[#374151] bg-white">
-    <header class="relative shadow-lg main-header">
-        <div class="absolute inset-0 bg-gradient-to-r from-[#8B5CF6] via-[#A78BFA] to-[#F472B6] opacity-95"></div>
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500835556837-99ac94a94552?auto=format&fit=crop&w=1400&q=80')] opacity-10 mix-blend-screen"></div>
-        <div class="relative max-w-7xl mx-auto flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 text-white text-2xl shadow-lg backdrop-blur">
-                    <i class="fas fa-spa"></i>
-                </span>
-                <div class="leading-tight">
-                    <p class="text-white text-lg font-semibold tracking-wide uppercase">Studio de Unhas</p>
-                    <p class="text-white/90 text-sm">Beleza, cuidado e autoamor</p>
-                </div>
-            </a>
-            <nav class="hidden md:flex items-center gap-2 text-sm font-medium">
-                <a href="{{ route('home') }}" class="nav-link px-4 py-2 rounded-full">Início</a>
-                <a href="{{ route('appointments.create') }}" class="nav-link px-4 py-2 rounded-full">Agendar</a>
+<body class="min-h-screen font-sans antialiased bg-white" x-data="{ mobileMenuOpen: false }">
+    <!-- Header - Compact & Modern -->
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-spa text-white text-lg"></i>
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-gray-900 font-bold text-lg">Studio de Unhas</p>
+                        <p class="text-gray-500 text-xs">Beleza e bem-estar</p>
+                    </div>
+                </a>
+                
+                <nav class="hidden md:flex items-center gap-1">
+                    <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">Início</a>
+                    <a href="{{ route('appointments.create') }}" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition">Agendar</a>
+                    @auth
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">Admin</a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">Sair</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">Entrar</a>
+                    @endauth
+                </nav>
+                
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-gray-600 hover:text-purple-600">
+                    <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div x-show="mobileMenuOpen" x-transition class="md:hidden border-t border-gray-200 bg-white">
+            <nav class="px-4 py-3 space-y-1">
+                <a href="{{ route('home') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg">Início</a>
+                <a href="{{ route('appointments.create') }}" class="block px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">Agendar</a>
                 @auth
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link px-4 py-2 rounded-full">Painel Admin</a>
+                        <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg">Admin</a>
                     @endif
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="nav-link px-4 py-2 rounded-full">Sair</button>
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg">Sair</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="nav-link px-4 py-2 rounded-full">Entrar</a>
+                    <a href="{{ route('login') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg">Entrar</a>
                 @endauth
             </nav>
-            <button id="mobile-toggle" class="md:hidden text-white text-2xl" aria-label="Abrir menu">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
-        <nav id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-[#8B5CF6]/95 backdrop-blur">
-            <div class="px-4 py-4 space-y-3 text-sm font-medium text-white">
-                <a href="{{ route('home') }}" class="block rounded-lg px-4 py-3 bg-[#6B46C1] text-white">Início</a>
-                <a href="{{ route('appointments.create') }}" class="block rounded-lg px-4 py-3 hover:bg-[#6B46C1] transition">Agendar</a>
-                @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-4 py-3 hover:bg-[#6B46C1] transition">Painel Admin</a>
-                    @endif
-                    <form action="{{ route('logout') }}" method="POST" class="block">
-                        @csrf
-                        <button type="submit" class="w-full text-left rounded-lg px-4 py-3 hover:bg-[#6B46C1] transition">Sair</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="block rounded-lg px-4 py-3 hover:bg-[#6B46C1] transition">Entrar</a>
-                @endauth
-            </div>
-        </nav>
     </header>
 
     @if(session('success'))
-        <div class="max-w-3xl mx-auto mt-6 px-4">
-            <div class="rounded-2xl bg-white shadow ring-1 ring-[#8B5CF6]/50 p-4 text-sm text-[#6B7280] flex items-start gap-3">
-                <span class="text-lg text-[#8B5CF6]">
-                    <i class="fas fa-check-circle"></i>
-                </span>
-                <span>{{ session('success') }}</span>
+        <div class="max-w-4xl mx-auto mt-4 px-4">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+                <i class="fas fa-check-circle text-green-600"></i>
+                <span class="text-sm text-green-800">{{ session('success') }}</span>
             </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="max-w-3xl mx-auto mt-6 px-4">
-            <div class="rounded-2xl bg-white shadow ring-1 ring-red-200/70 p-4 text-sm text-red-700 flex items-start gap-3">
-                <span class="text-lg">
-                    <i class="fas fa-circle-exclamation"></i>
-                </span>
-                <span>{{ session('error') }}</span>
+        <div class="max-w-4xl mx-auto mt-4 px-4">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                <i class="fas fa-circle-exclamation text-red-600"></i>
+                <span class="text-sm text-red-800">{{ session('error') }}</span>
             </div>
         </div>
     @endif
 
-    <main class="py-12 md:py-16">
+    <main>
         @yield('content')
     </main>
 
-    <footer class="relative overflow-hidden main-footer text-[#374151]">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/20 via-transparent to-[#F472B6]/15"></div>
-        <div class="absolute -right-16 -top-24 h-56 w-56 rounded-full bg-[#8B5CF6]/15 blur-3xl"></div>
-        <div class="absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-[#F472B6]/20 blur-3xl"></div>
-        <div class="relative max-w-7xl mx-auto px-6 py-10 lg:py-14">
-            <div class="grid gap-10 md:grid-cols-3">
+    <!-- Footer - Compact -->
+    <footer class="bg-gray-900 text-gray-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-[#8B5CF6] tracking-wide uppercase">Studio de Unhas</h3>
-                    <p class="mt-4 text-sm text-[#6B7280] leading-relaxed">Experiência premium em manicure, pedicure e alongamentos. Ambiente acolhedor, profissionais talentosos e produtos de alta qualidade.</p>
+                    <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+                        <i class="fas fa-spa text-purple-400"></i>
+                        Studio de Unhas
+                    </h3>
+                    <p class="text-sm text-gray-400">Experiência premium em manicure e pedicure. Ambiente acolhedor e produtos de alta qualidade.</p>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold text-[#8B5CF6] uppercase tracking-wide">Contato</h4>
-                    <ul class="mt-4 space-y-3 text-sm text-[#6B7280]">
-                        <li class="flex items-center gap-3">
-                            <span class="text-[#8B5CF6]"><i class="fas fa-phone"></i></span>
+                    <h4 class="text-white font-semibold mb-3 text-sm">Contato</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-phone text-purple-400 w-4"></i>
                             <span>(11) 99999-9999</span>
                         </li>
-                        <li class="flex items-center gap-3">
-                            <span class="text-[#8B5CF6]"><i class="fas fa-envelope"></i></span>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-envelope text-purple-400 w-4"></i>
                             <span>contato@studiounhas.com</span>
                         </li>
-                        <li class="flex items-center gap-3">
-                            <span class="text-[#8B5CF6]"><i class="fas fa-map-marker-alt"></i></span>
-                            <span>Rua das Rosas, 123 - Centro</span>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-purple-400 w-4"></i>
+                            <span>Rua das Rosas, 123</span>
                         </li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold text-[#8B5CF6] uppercase tracking-wide">Horário de funcionamento</h4>
-                    <ul class="mt-4 space-y-2 text-sm text-[#6B7280]">
-                        <li class="flex justify-between"><span>Segunda a Sexta</span><span>09h - 18h</span></li>
+                    <h4 class="text-white font-semibold mb-3 text-sm">Horário</h4>
+                    <ul class="space-y-1 text-sm">
+                        <li class="flex justify-between"><span>Seg - Sex</span><span>09h - 18h</span></li>
                         <li class="flex justify-between"><span>Sábado</span><span>09h - 16h</span></li>
                         <li class="flex justify-between"><span>Domingo</span><span>Fechado</span></li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-10 border-t border-[#8B5CF6]/30 pt-6 text-center text-xs text-[#9CA3AF] tracking-wide">
-                &copy; {{ date('Y') }} Studio de Unhas • Criado com ♥ para realçar sua beleza
+            <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
+                &copy; {{ date('Y') }} Studio de Unhas • Feito com <i class="fas fa-heart text-pink-500"></i> para realçar sua beleza
             </div>
         </div>
     </footer>
-
-    <script>
-        const mobileToggle = document.getElementById('mobile-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileToggle && mobileMenu) {
-            mobileToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.add('px-4','py-2','rounded-full','text-white','hover:bg-white/20','transition','duration-200','ring-1','ring-white/0','hover:ring-white/40');
-        });
-    </script>
 
     @stack('scripts')
 </body>

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin - Studio de Unhas')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
             --purple-dark: #6B46C1;
@@ -132,8 +132,14 @@
         /* Responsividade para mobile */
         @media (max-width: 768px) {
             .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
                 width: 280px;
                 border-radius: 0;
+            }
+
+            .admin-sidebar.mobile-open {
+                transform: translateX(0);
             }
 
             .admin-sidebar .sidebar-header {
@@ -149,6 +155,7 @@
                 padding: 0.75rem 0.75rem;
                 font-size: 0.875rem;
             }
+        }
 
         .admin-sidebar .nav-icon {
             width: 1rem;
@@ -231,6 +238,22 @@
             background-color: #FAFAFA;
         }
 
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         /* EXEMPLOS DE USO:
          * Para alterar cores do menu: modifique --sidebar-bg, --sidebar-text, etc.
          * Para alterar cores de botões: modifique --purple-medium, --purple-dark
@@ -239,10 +262,13 @@
          */
     </style>
 </head>
-<body class="bg-white text-[#374151]">
+<body class="bg-white text-[#374151]" x-data="{ sidebarOpen: false }">
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" :class="{ 'active': sidebarOpen }" @click="sidebarOpen = false"></div>
+
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <div class="admin-sidebar w-64 flex flex-col">
+        <div class="admin-sidebar w-64 flex flex-col" :class="{ 'mobile-open': sidebarOpen }">
 
 
             <!-- Menu Principal -->
@@ -338,38 +364,43 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden ml-64">
+        <div class="flex-1 flex flex-col overflow-hidden md:ml-64">
             <!-- Top bar -->
-            <header class="bg-white shadow">
-                <div class="px-6 py-4 flex flex-col gap-3">
+            <header class="bg-white shadow sticky top-0 z-20">
+                <div class="px-4 md:px-6 py-3 md:py-4 flex flex-col gap-3">
                     <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
-                        <div class="flex items-center gap-4">
-                            <a href="{{ route('admin.appointments.manage') }}" class="relative inline-flex items-center gap-2 rounded-full border border-[#8B5CF6]/40 px-4 py-2 text-sm font-semibold text-[#7C3AED] hover:bg-[#F3E8FF]">
+                        <!-- Mobile Menu Button -->
+                        <button @click="sidebarOpen = !sidebarOpen" class="md:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-600">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        
+                        <h1 class="text-lg md:text-2xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
+                        <div class="flex items-center gap-2 md:gap-4">
+                            <a href="{{ route('admin.appointments.manage') }}" class="relative inline-flex items-center gap-1 md:gap-2 rounded-full border border-[#8B5CF6]/40 px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-[#7C3AED] hover:bg-[#F3E8FF]">
                                 <i class="fas fa-bell"></i>
-                                Alertas
+                                <span class="hidden sm:inline">Alertas</span>
                                 @php
                                     $totalAlerts = ($alertPendingCount ?? 0) + ($alertConfirmedCount ?? 0);
                                 @endphp
-                                <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-[#F87171] text-white text-xs font-bold">
+                                <span class="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-[#F87171] text-white text-xs font-bold">
                                     {{ $totalAlerts }}
                                 </span>
                             </a>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                        <div class="flex items-center gap-3 rounded-2xl border border-[#F59E0B]/40 bg-[#FEF3C7] px-4 py-3 text-[#B45309]">
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#FDE68A] text-[#B45309]"><i class="fas fa-clock"></i></span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 text-xs">
+                        <div class="flex items-center gap-2 md:gap-3 rounded-xl md:rounded-2xl border border-[#F59E0B]/40 bg-[#FEF3C7] px-3 md:px-4 py-2 md:py-3 text-[#B45309]">
+                            <span class="inline-flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-full bg-[#FDE68A] text-[#B45309]"><i class="fas fa-clock text-xs md:text-sm"></i></span>
                             <div>
-                                <p class="font-semibold uppercase tracking-wide">Pendentes</p>
-                                <p>{{ $alertPendingCount ?? 0 }} agendamento(s) aguardando confirmação</p>
+                                <p class="font-semibold uppercase tracking-wide text-xs">Pendentes</p>
+                                <p class="text-xs">{{ $alertPendingCount ?? 0 }} aguardando confirmação</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3 rounded-2xl border border-emerald-300/50 bg-emerald-50 px-4 py-3 text-emerald-700">
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><i class="fas fa-check-double"></i></span>
+                        <div class="flex items-center gap-2 md:gap-3 rounded-xl md:rounded-2xl border border-emerald-300/50 bg-emerald-50 px-3 md:px-4 py-2 md:py-3 text-emerald-700">
+                            <span class="inline-flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><i class="fas fa-check-double text-xs md:text-sm"></i></span>
                             <div>
-                                <p class="font-semibold uppercase tracking-wide">Confirmados</p>
-                                <p>{{ $alertConfirmedCount ?? 0 }} aguardando finalização</p>
+                                <p class="font-semibold uppercase tracking-wide text-xs">Confirmados</p>
+                                <p class="text-xs">{{ $alertConfirmedCount ?? 0 }} aguardando finalização</p>
                             </div>
                         </div>
                     </div>
@@ -377,7 +408,7 @@
             </header>
 
             <!-- Flash Messages -->
-            <div class="px-6 py-4">
+            <div class="px-4 md:px-6 py-4">
                 @if(session('success'))
                     <div class="admin-card border-purple-300/50 text-purple-700 px-4 py-3 rounded-lg shadow-sm relative mb-4" role="alert">
                         <span class="block sm:inline">{{ session('success') }}</span>
@@ -402,7 +433,7 @@
             </div>
 
             <!-- Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto admin-bg-light px-6 pb-6">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto admin-bg-light px-4 md:px-6 pb-6">
                 @yield('content')
             </main>
         </div>
@@ -441,6 +472,27 @@
                 item.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateX(0)';
                 });
+            });
+
+            // Fechar sidebar ao clicar em um link no mobile
+            const sidebarLinks = document.querySelectorAll('.admin-sidebar .nav-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 768) {
+                        // Trigger Alpine.js to close sidebar
+                        const event = new CustomEvent('close-sidebar');
+                        document.dispatchEvent(event);
+                    }
+                });
+            });
+
+            // Listen for close-sidebar event
+            document.addEventListener('close-sidebar', function() {
+                // This will be handled by Alpine.js
+                const body = document.querySelector('body');
+                if (body.__x) {
+                    body.__x.$data.sidebarOpen = false;
+                }
             });
         });
     </script>
