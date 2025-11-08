@@ -1,236 +1,254 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Agenda Semanal de Atendimentos')
+@section('page-title', 'Agenda de Atendimentos')
 
 @section('content')
-<div class="space-y-8">
-    <!-- Ações e filtros -->
-    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-        <div class="flex flex-wrap items-center gap-3">
-            <a href="{{ route('admin.appointments.create') }}" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#6B46C1] px-5 py-2.5 text-sm font-semibold text-white shadow hover:shadow-lg hover:scale-105">
-                <i class="fas fa-plus"></i>
-                Novo Agendamento
-            </a>
-            <a href="{{ route('admin.appointments.manage') }}" class="inline-flex items-center gap-2 rounded-full border border-[#7C3AED] px-4 py-2 text-xs font-semibold text-[#7C3AED] hover:bg-[#F3E8FF]">
-                <i class="fas fa-clipboard-check"></i>
-                Confirmar / Finalizar agendamentos
-            </a>
-        </div>
-
-        <form method="GET" class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2">
-                <label for="week" class="text-xs font-semibold text-[#6B7280] uppercase">Semana</label>
-                <input type="date" name="week" id="week" value="{{ request('week', $weekStart->format('Y-m-d')) }}" class="rounded-lg border border-[#8B5CF6]/40 px-3 py-2 text-sm focus:border-[#7C3AED] focus:ring-[#C4B5FD]/30">
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="status" class="text-xs font-semibold text-[#6B7280] uppercase">Status</label>
-                <select name="status" id="status" class="rounded-lg border border-[#8B5CF6]/40 px-3 py-2 text-sm focus:border-[#7C3AED] focus:ring-[#C4B5FD]/30">
-                    <option value="">Todos</option>
-                    @foreach($statusOptions as $value => $label)
-                        <option value="{{ $value }}" {{ $statusFilter === $value ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" class="inline-flex items-center gap-2 rounded-full border border-[#7C3AED] px-4 py-2 text-xs font-semibold text-[#7C3AED] hover:bg-[#F3E8FF]">
-                <i class="fas fa-filter"></i>
-                Aplicar filtros
-            </button>
-            @if(request()->hasAny(['status', 'week']))
-                <a href="{{ route('admin.appointments.index') }}" class="text-xs font-semibold text-[#9CA3AF] hover:text-[#6B7280]">
-                    Limpar filtros
+<div class="flex flex-col lg:flex-row gap-4 h-[calc(100vh-12rem)]" x-data="{ 
+    selectedDate: '{{ $selectedDate->format('Y-m-d') }}',
+    selectedMonth: '{{ $selectedMonth->format('Y-m') }}'
+}">
+    
+    <!-- Sidebar Esquerda - Calendário + Filtros -->
+    <div class="lg:w-80 flex-shrink-0 space-y-4">
+        
+        <!-- Calendário Mensal -->
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+            <!-- Header do Calendário -->
+            <div class="flex items-center justify-between mb-4">
+                <a href="?month={{ $previousMonth }}&date={{ $selectedDate->format('Y-m-d') }}&status={{ $statusFilter }}" 
+                   class="p-2 hover:bg-gray-100 rounded-lg transition">
+                    <i class="fas fa-chevron-left text-gray-600"></i>
                 </a>
-            @endif
-        </form>
-    </div>
-
-    <!-- Calendário semanal -->
-    <div class="rounded-3xl border border-[#8B5CF6]/50 bg-white p-6 shadow-lg shadow-[#8B5CF6]/20">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div>
-                <p class="text-xs uppercase tracking-[0.3em] text-[#7C3AED]">Agenda semanal</p>
-                <h2 class="text-2xl font-semibold text-[#374151]">{{ $weekStart->format('d \d\e M') }} a {{ $weekEnd->format('d \d\e M \d\e Y') }}</h2>
+                <h3 class="text-sm font-bold text-gray-900">
+                    {{ $selectedMonth->locale('pt_BR')->isoFormat('MMMM YYYY') }}
+                </h3>
+                <a href="?month={{ $nextMonth }}&date={{ $selectedDate->format('Y-m-d') }}&status={{ $statusFilter }}" 
+                   class="p-2 hover:bg-gray-100 rounded-lg transition">
+                    <i class="fas fa-chevron-right text-gray-600"></i>
+                </a>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div class="flex items-center gap-2 rounded-full border border-[#FBBF24]/50 bg-[#FEF3C7] px-3 py-2 text-[#B45309]">
-                    <span class="h-3 w-3 rounded-full bg-[#FBBF24]"></span>
-                    Pendente
-                </div>
-                <div class="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-700">
-                    <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
-                    Confirmado
-                </div>
-                <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">
-                    <span class="h-3 w-3 rounded-full bg-slate-400"></span>
-                    Concluído
-                </div>
-                <div class="flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-2 text-rose-700">
-                    <span class="h-3 w-3 rounded-full bg-rose-400"></span>
-                    Cancelado
-                </div>
-            </div>
-        </div>
 
-        <div class="mt-6 overflow-x-auto">
-            <table class="min-w-full border-separate border-spacing-0 text-sm">
-                <thead>
-                    <tr>
-                        <th class="sticky left-0 z-20 w-28 bg-[#F3E8FF] px-4 py-3 text-left text-xs font-semibold uppercase text-[#6B7280]">Horário</th>
-                        @foreach($weekDays as $day)
-                            <th class="min-w-[180px] bg-[#F3E8FF] px-3 py-3 text-left text-xs font-semibold uppercase text-[#6B7280]">
-                                <div class="flex flex-col">
-                                    <span>{{ $day->locale('pt_BR')->dayName }}</span>
-                                    <span class="text-[#9CA3AF] text-[11px]">{{ $day->format('d/m') }}</span>
-                                </div>
-                            </th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($timeSlots as $slot)
-                        <tr>
-                            <td class="sticky left-0 z-10 bg-white/90 px-4 py-4 text-[#6B7280] text-xs font-medium">{{ $slot }}</td>
-                            @foreach($weekDays as $day)
-                                @php
-                                    $dateKey = $day->format('Y-m-d');
-                                    $appointmentsForDay = $appointmentsByDay->get($dateKey, collect());
-                                    $appointmentForSlot = $appointmentsForDay->first(function ($appointment) use ($slot) {
-                                        return substr($appointment->appointment_time, 0, 5) === $slot;
-                                    });
-                                @endphp
-                                <td class="px-3 py-3 align-top">
-                                    @if($appointmentForSlot)
-                                        @php
-                                            $statusClasses = [
-                                                'pendente' => 'border-[#FBBF24]/60 bg-[#FEF3C7] text-[#B45309]',
-                                                'confirmado' => 'border-emerald-200 bg-emerald-50 text-emerald-700',
-                                                'concluido' => 'border-slate-200 bg-slate-50 text-slate-700',
-                                                'cancelado' => 'border-rose-200 bg-rose-50 text-rose-700',
-                                            ];
-                                            $status = $appointmentForSlot->status;
-                                        @endphp
-                                        <div class="group rounded-2xl border px-3 py-3 text-xs shadow-sm transition hover:-translate-y-1 hover:shadow-md {{ $statusClasses[$status] ?? 'border-slate-200 bg-slate-50 text-slate-700' }}">
-                                            <div class="flex items-center justify-between gap-2">
-                                                <p class="font-semibold break-words">{{ $appointmentForSlot->client_name }}</p>
-                                                <span class="text-[11px] uppercase tracking-wide">{{ ucfirst($status) }}</span>
-                                            </div>
-                                            <p class="mt-1 font-medium text-[#4B5563] break-words">{{ $appointmentForSlot->service->name }}</p>
-                                            <p class="mt-1 text-[11px] text-[#6B7280] break-all">{{ $appointmentForSlot->client_phone }}</p>
-                                            @if($appointmentForSlot->notes)
-                                                <p class="mt-2 rounded-lg bg-white/70 px-2 py-1 text-[11px] text-[#6B7280] line-clamp-3">{{ $appointmentForSlot->notes }}</p>
-                                            @endif
-                                            <div class="mt-3 flex items-center justify-end text-[11px] text-[#7C3AED]">
-                                                <a href="{{ route('admin.appointments.edit', $appointmentForSlot) }}" class="flex items-center gap-1 font-semibold">
-                                                    <i class="fas fa-edit"></i>
-                                                    Editar
-                                                </a>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="rounded-2xl border border-dashed border-[#8B5CF6]/30 bg-[#F3E8FF]/30 px-3 py-4 text-center text-[11px] text-[#7C3AED]">
-                                            <span>Disponível</span>
-                                        </div>
-                                    @endif
-                                </td>
-                            @endforeach
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Lista e resumo -->
-    <div class="grid gap-6 lg:grid-cols-5">
-        <div class="lg:col-span-3 rounded-3xl border border-[#8B5CF6]/50 bg-white shadow-lg shadow-[#8B5CF6]/20">
-            <div class="border-b border-[#8B5CF6]/20 px-6 py-4">
-                <h3 class="text-lg font-semibold text-[#374151]">Lista de agendamentos ({{ $weekStart->format('d/m') }} a {{ $weekEnd->format('d/m') }})</h3>
-                <p class="text-xs text-[#6B7280]">Agendamentos pendentes aparecem primeiro</p>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-[#8B5CF6]/20 text-sm">
-                    <thead class="bg-[#F3E8FF] text-[11px] uppercase tracking-wide text-[#8B5CF6]">
-                        <tr>
-                            <th class="px-6 py-3 text-left">Data</th>
-                            <th class="px-6 py-3 text-left">Cliente</th>
-                            <th class="px-6 py-3 text-left">Serviço</th>
-                            <th class="px-6 py-3 text-left">Status</th>
-                            <th class="px-6 py-3 text-right">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-[#8B5CF6]/20">
-                        @foreach($appointmentsList as $appointment)
-                            <tr class="hover:bg-[#F3E8FF]/30">
-                                <td class="px-6 py-4 text-[#374151]">
-                                    <div class="font-semibold">{{ $appointment->appointment_date->format('d/m/Y') }}</div>
-                                    <div class="text-[11px] text-[#6B7280] uppercase tracking-wide">{{ substr($appointment->appointment_time, 0, 5) }}</div>
-                                </td>
-                                <td class="px-6 py-4 text-[#374151]">
-                                    <div class="font-semibold break-words">{{ $appointment->client_name }}</div>
-                                    <div class="text-[11px] text-[#9CA3AF] break-all">{{ $appointment->client_phone }}</div>
-                                </td>
-                                <td class="px-6 py-4 text-[#6B7280] break-words">{{ $appointment->service->name }}</td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $statusLabels = [
-                                            'pendente' => 'bg-[#F3E8FF] text-[#8B5CF6]',
-                                            'confirmado' => 'bg-emerald-100 text-emerald-800',
-                                            'concluido' => 'bg-slate-100 text-slate-800',
-                                            'cancelado' => 'bg-rose-100 text-rose-800',
-                                        ];
-                                    @endphp
-                                    <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {{ $statusLabels[$appointment->status] ?? 'bg-slate-100 text-slate-800' }}">
-                                        {{ ucfirst($appointment->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right text-sm">
-                                    <a href="{{ route('admin.appointments.edit', $appointment) }}" class="text-[#8B5CF6] hover:text-[#6B46C1] mr-3">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('admin.appointments.destroy', $appointment) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza que deseja excluir este agendamento?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-600 hover:text-rose-800">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-
-                        @if($appointmentsList->isEmpty())
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-[#9CA3AF] text-sm">
-                                    Nenhum agendamento encontrado para esta semana.
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="lg:col-span-2 rounded-3xl border border-[#8B5CF6]/50 bg-white p-6 shadow-lg shadow-[#8B5CF6]/20">
-            <h3 class="text-lg font-semibold text-[#374151]">Resumo rápido</h3>
-            <div class="mt-4 space-y-4 text-sm text-[#6B7280]">
-                <div class="flex justify-between">
-                    <span>Total na semana</span>
-                    <span class="font-semibold text-[#374151]">{{ $appointments->count() }}</span>
-                </div>
-                @foreach($statusOptions as $statusValue => $statusLabel)
-                    <div class="flex justify-between">
-                        <span>{{ $statusLabel }}</span>
-                        <span class="font-semibold text-[#374151]">{{ $appointments->where('status', $statusValue)->count() }}</span>
-                    </div>
+            <!-- Dias da Semana -->
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; margin-bottom: 0.5rem;">
+                @foreach(['D', 'S', 'T', 'Q', 'Q', 'S', 'S'] as $day)
+                    <div style="text-align: center; font-size: 0.75rem; font-weight: 600; color: #6B7280;">{{ $day }}</div>
                 @endforeach
             </div>
 
-            <div class="mt-6 rounded-2xl border border-dashed border-[#8B5CF6]/40 bg-[#F3E8FF]/70 p-4 text-xs text-[#7C3AED]">
-                <p class="font-semibold">Dica</p>
-                <p class="mt-2">Clique em um horário vazio no calendário para direcionar a criação de um novo agendamento.</p>
+            <!-- Dias do Mês -->
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem;">
+                @php
+                    $firstDayOfWeek = $monthStart->copy()->dayOfWeek;
+                    $daysInMonth = $monthEnd->day;
+                    
+                    // Ajustar para começar na segunda-feira (0 = domingo, 1 = segunda)
+                    $offset = $firstDayOfWeek == 0 ? 6 : $firstDayOfWeek - 1;
+                @endphp
+
+                @for($i = 0; $i < $offset; $i++)
+                    <div style="aspect-ratio: 1;"></div>
+                @endfor
+
+                @for($day = 1; $day <= $daysInMonth; $day++)
+                    @php
+                        $date = $selectedMonth->copy()->day($day);
+                        $dateStr = $date->format('Y-m-d');
+                        $isToday = $date->isToday();
+                        $isSelected = $dateStr === $selectedDate->format('Y-m-d');
+                        $hasAppointments = isset($monthAppointments[$dateStr]);
+                    @endphp
+                    <a href="?date={{ $dateStr }}&month={{ $selectedMonth->format('Y-m-01') }}&status={{ $statusFilter }}"
+                       style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+                              border-radius: 0.5rem; font-size: 0.75rem; transition: all 0.2s; position: relative; text-decoration: none;
+                              {{ $isSelected ? 'background-color: #9333ea; color: white; font-weight: bold;' : ($isToday ? 'background-color: #f3e8ff; color: #7e22ce; font-weight: 600;' : 'color: #374151;') }}"
+                       onmouseover="if(!this.style.backgroundColor.includes('9333ea')) this.style.backgroundColor='#f3f4f6'"
+                       onmouseout="if(!this.style.backgroundColor.includes('9333ea')) this.style.backgroundColor='{{ $isToday ? '#f3e8ff' : 'transparent' }}'">
+                        <span>{{ $day }}</span>
+                        @if($hasAppointments)
+                            <span style="position: absolute; bottom: 2px; width: 4px; height: 4px; border-radius: 50%; 
+                                         background-color: {{ $isSelected ? 'white' : '#9333ea' }};"></span>
+                        @endif
+                    </a>
+                @endfor
+            </div>
+
+            <!-- Botão Hoje -->
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <a href="?date={{ now()->format('Y-m-d') }}&month={{ now()->format('Y-m-01') }}" 
+                   class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-700">
+                    Hoje
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">Filtros</h3>
+            
+            <form method="GET" class="space-y-3">
+                <input type="hidden" name="date" value="{{ $selectedDate->format('Y-m-d') }}">
+                <input type="hidden" name="month" value="{{ $selectedMonth->format('Y-m-01') }}">
+                
+                <!-- Status -->
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Status</label>
+                    <select name="status" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                        <option value="">Todos os status</option>
+                        @foreach($statusOptions as $value => $label)
+                            <option value="{{ $value }}" {{ $statusFilter === $value ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
+                        Aplicar
+                    </button>
+                    @if($statusFilter)
+                        <a href="?date={{ $selectedDate->format('Y-m-d') }}&month={{ $selectedMonth->format('Y-m-01') }}" 
+                           class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg transition text-center">
+                            Limpar
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+
+        <!-- Legenda de Status -->
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+            <h3 class="text-xs font-bold text-gray-600 uppercase mb-3">Legenda</h3>
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <span class="text-xs text-gray-700">Pendente</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span class="text-xs text-gray-700">Confirmado</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-xs text-gray-700">Concluído</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <span class="text-xs text-gray-700">Cancelado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área Principal - Horários do Dia -->
+    <div class="flex-1 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold">{{ $selectedDate->locale('pt_BR')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}</h2>
+                    <p class="text-sm text-purple-100 mt-1">
+                        {{ $appointments->count() }} agendamento(s) no dia
+                    </p>
+                </div>
+                <a href="{{ route('admin.appointments.create') }}?date={{ $selectedDate->format('Y-m-d') }}" 
+                   class="bg-white text-purple-600 hover:bg-purple-50 px-4 py-2 rounded-lg font-semibold text-sm transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i>
+                    Novo Agendamento
+                </a>
+            </div>
+        </div>
+
+        <!-- Grade de Horários -->
+        <div class="flex-1 overflow-y-auto p-4">
+            <div class="space-y-2">
+                @foreach($timeSlots as $time)
+                    @php
+                        $hasAppointment = isset($appointmentsByTime[$time]);
+                        $slotAppointments = $hasAppointment ? $appointmentsByTime[$time] : collect();
+                    @endphp
+                    
+                    <div class="flex gap-3 min-h-[60px]">
+                        <!-- Horário -->
+                        <div class="w-16 flex-shrink-0 text-sm font-semibold text-gray-500 pt-1">
+                            {{ $time }}
+                        </div>
+
+                        <!-- Slot de Agendamento -->
+                        <div class="flex-1">
+                            @if($hasAppointment)
+                                @foreach($slotAppointments as $appointment)
+                                    @php
+                                        $statusColors = [
+                                            'pendente' => 'bg-yellow-50 border-yellow-400 hover:bg-yellow-100',
+                                            'confirmado' => 'bg-blue-50 border-blue-500 hover:bg-blue-100',
+                                            'concluido' => 'bg-green-50 border-green-500 hover:bg-green-100',
+                                            'cancelado' => 'bg-red-50 border-red-500 hover:bg-red-100',
+                                        ];
+                                        $statusDotColors = [
+                                            'pendente' => 'bg-yellow-400',
+                                            'confirmado' => 'bg-blue-500',
+                                            'concluido' => 'bg-green-500',
+                                            'cancelado' => 'bg-red-500',
+                                        ];
+                                    @endphp
+                                    
+                                    <div class="border-l-4 rounded-lg p-3 mb-2 transition cursor-pointer {{ $statusColors[$appointment->status] }}"
+                                         onclick="window.location.href='{{ route('admin.appointments.edit', $appointment) }}'">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <div class="w-2 h-2 rounded-full {{ $statusDotColors[$appointment->status] }}"></div>
+                                                    <span class="font-bold text-gray-900">{{ $appointment->client_name }}</span>
+                                                </div>
+                                                <p class="text-sm text-gray-700 mb-1">
+                                                    <i class="fas fa-spa text-purple-500 mr-1"></i>
+                                                    {{ $appointment->service->name }}
+                                                </p>
+                                                <div class="flex items-center gap-3 text-xs text-gray-600">
+                                                    <span>
+                                                        <i class="fas fa-phone mr-1"></i>
+                                                        {{ $appointment->client_phone }}
+                                                    </span>
+                                                    <span>
+                                                        <i class="fas fa-clock mr-1"></i>
+                                                        {{ $appointment->service->duration_minutes }}min
+                                                    </span>
+                                                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                                        {{ $appointment->status === 'pendente' ? 'bg-yellow-200 text-yellow-800' : '' }}
+                                                        {{ $appointment->status === 'confirmado' ? 'bg-blue-200 text-blue-800' : '' }}
+                                                        {{ $appointment->status === 'concluido' ? 'bg-green-200 text-green-800' : '' }}
+                                                        {{ $appointment->status === 'cancelado' ? 'bg-red-200 text-red-800' : '' }}">
+                                                        {{ $statusOptions[$appointment->status] }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-1 ml-2">
+                                                <a href="{{ route('admin.appointments.edit', $appointment) }}" 
+                                                   class="p-1.5 hover:bg-white rounded transition" title="Editar">
+                                                    <i class="fas fa-edit text-gray-600 text-sm"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        @if($appointment->notes)
+                                            <p class="text-xs text-gray-600 mt-2 italic">
+                                                <i class="fas fa-comment-dots mr-1"></i>
+                                                {{ $appointment->notes }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="border-2 border-dashed border-gray-200 rounded-lg p-3 text-center text-gray-400 hover:border-purple-300 hover:bg-purple-50 transition cursor-pointer"
+                                     onclick="window.location.href='{{ route('admin.appointments.create') }}?date={{ $selectedDate->format('Y-m-d') }}&time={{ $time }}'">
+                                    <i class="fas fa-plus-circle text-sm"></i>
+                                    <span class="text-xs ml-1">Horário disponível</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
 </div>
 @endsection
-
-

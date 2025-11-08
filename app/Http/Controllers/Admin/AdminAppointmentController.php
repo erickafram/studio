@@ -13,6 +13,10 @@ class AdminAppointmentController extends Controller
 {
     public function index(Request $request)
     {
+        // Nova agenda estilo Trinks
+        $selectedDate = $request->input('date') ? Carbon::parse($request->input('date')) : Carbon::today();
+        $selectedMonth = $request->input('month') ? Carbon::parse($request->input('month')) : Carbon::today();
+        
         $statusOptions = [
             'pendente' => 'Pendente',
             'confirmado' => 'Confirmado',
@@ -20,68 +24,23 @@ class AdminAppointmentController extends Controller
             'cancelado' => 'Cancelado',
         ];
 
-        $weekInput = $request->input('week');
-
-        try {
-            $baseDate = $weekInput ? Carbon::parse($weekInput) : Carbon::today();
-        } catch (\Exception $exception) {
-            $baseDate = Carbon::today();
-        }
-
-        $weekStart = $baseDate->copy()->startOfWeek(Carbon::MONDAY);
-        $weekEnd = $weekStart->copy()->addDays(5);
-
-        $appointmentsQuery = Appointment::with('service')
-            ->whereBetween('appointment_date', [$weekStart->toDateString(), $weekEnd->toDateString()]);
-
+        // Filtros
         $statusFilter = $request->input('status');
+        $professionalFilter = $request->input('professional');
+
+        // Buscar agendamentos do dia selecionado
+        $appointmentsQuery = Appointment::with('service')
+            ->whereDate('appointment_date', $selectedDate->toDateString());
+
         if ($statusFilter && array_key_exists($statusFilter, $statusOptions)) {
             $appointmentsQuery->where('status', $statusFilter);
         }
 
         $appointments = $appointmentsQuery
-            ->orderBy('appointment_date')
             ->orderBy('appointment_time')
             ->get();
 
-        $appointmentsByDay = $appointments->groupBy(fn ($appointment) => $appointment->appointment_date->format('Y-m-d'));
-
-        $statusPriority = [
-            'pendente' => 0,
-            'confirmado' => 1,
-            'concluido' => 2,
-            'cancelado' => 3,
-        ];
-
-        $appointmentsList = $appointments->sortBy(function ($appointment) use ($statusPriority) {
-            $priority = $statusPriority[$appointment->status] ?? 99;
-
-            return sprintf(
-                '%02d-%s-%s',
-                $priority,
-                $appointment->appointment_date->format('Ymd'),
-                $appointment->appointment_time
-            );
-        });
-
-        $pendingAppointments = $appointments->where('status', 'pendente')
-            ->sortBy(function ($appointment) {
-                return sprintf(
-                    '%s-%s',
-                    $appointment->appointment_date->format('Ymd'),
-                    $appointment->appointment_time
-                );
-            });
-
-        $confirmedAppointments = $appointments->where('status', 'confirmado')
-            ->sortBy(function ($appointment) {
-                return sprintf(
-                    '%s-%s',
-                    $appointment->appointment_date->format('Ymd'),
-                    $appointment->appointment_time
-                );
-            });
-
+        // Horários disponíveis (9h às 18h, intervalos de 30min)
         $timeSlots = collect();
         for ($hour = 9; $hour <= 17; $hour++) {
             $timeSlots->push(sprintf('%02d:00', $hour));
@@ -89,23 +48,31 @@ class AdminAppointmentController extends Controller
         }
         $timeSlots->push('18:00');
 
-        $weekDays = collect(range(0, 5))->map(fn ($offset) => $weekStart->copy()->addDays($offset));
+        // Agrupar agendamentos por horário
+        $appointmentsByTime = $appointments->groupBy(fn ($apt) => substr($apt->appointment_time, 0, 5));
+
+        // Calendário do mês
+        $monthStart = $selectedMonth->copy()->startOfMonth();
+        $monthEnd = $selectedMonth->copy()->endOfMonth();
+        
+        // Buscar todos agendamentos do mês para marcar no calendário
+        $monthAppointments = Appointment::whereBetween('appointment_date', [$monthStart, $monthEnd])
+            ->get()
+            ->groupBy(fn ($apt) => $apt->appointment_date->format('Y-m-d'));
 
         return view('admin.appointments.index', [
-            'weekStart' => $weekStart,
-            'weekEnd' => $weekEnd,
-            'weekDays' => $weekDays,
+            'selectedDate' => $selectedDate,
+            'selectedMonth' => $selectedMonth,
             'appointments' => $appointments,
-            'appointmentsByDay' => $appointmentsByDay,
-            'appointmentsList' => $appointmentsList,
-            'pendingAppointments' => $pendingAppointments,
-            'confirmedAppointments' => $confirmedAppointments,
+            'appointmentsByTime' => $appointmentsByTime,
             'timeSlots' => $timeSlots,
             'statusFilter' => $statusFilter,
             'statusOptions' => $statusOptions,
-            'previousWeek' => $weekStart->copy()->subWeek()->format('Y-m-d'),
-            'nextWeek' => $weekStart->copy()->addWeek()->format('Y-m-d'),
-            'currentWeek' => Carbon::today()->format('Y-m-d'),
+            'monthAppointments' => $monthAppointments,
+            'monthStart' => $monthStart,
+            'monthEnd' => $monthEnd,
+            'previousMonth' => $selectedMonth->copy()->subMonth()->format('Y-m-01'),
+            'nextMonth' => $selectedMonth->copy()->addMonth()->format('Y-m-01'),
         ]);
     }
 
