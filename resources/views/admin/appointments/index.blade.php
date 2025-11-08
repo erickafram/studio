@@ -8,8 +8,8 @@
     selectedMonth: '{{ $selectedMonth->format('Y-m') }}'
 }">
     
-    <!-- Sidebar Esquerda - Calendário + Filtros -->
-    <div class="lg:w-64 flex-shrink-0 space-y-4">
+    <!-- Sidebar Esquerda - Calendário + Filtros (Escondida no mobile) -->
+    <div class="hidden lg:block lg:w-64 flex-shrink-0 space-y-4">
         
         <!-- Calendário Mensal -->
         <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
@@ -252,10 +252,26 @@
 
         <!-- Lista Compacta - Mobile -->
         <div class="md:hidden flex-1 overflow-y-auto p-3">
-            <!-- Botão Novo Agendamento -->
-            <div class="mb-4 sticky top-0 bg-white z-10 pb-3">
+            <!-- Header Mobile com Data e Navegação -->
+            <div class="mb-3 sticky top-0 bg-white z-10 pb-3 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                    <a href="?date={{ $selectedDate->copy()->subDay()->format('Y-m-d') }}&month={{ $selectedMonth->format('Y-m-01') }}" 
+                       class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chevron-left text-gray-600"></i>
+                    </a>
+                    <div class="text-center">
+                        <h3 class="font-bold text-gray-900">{{ $selectedDate->locale('pt_BR')->isoFormat('DD [de] MMMM') }}</h3>
+                        <p class="text-xs text-gray-500">{{ $selectedDate->locale('pt_BR')->isoFormat('dddd') }}</p>
+                    </div>
+                    <a href="?date={{ $selectedDate->copy()->addDay()->format('Y-m-d') }}&month={{ $selectedMonth->format('Y-m-01') }}" 
+                       class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chevron-right text-gray-600"></i>
+                    </a>
+                </div>
+                
+                <!-- Botão Novo Agendamento -->
                 <a href="{{ route('admin.appointments.create') }}?date={{ $selectedDate->format('Y-m-d') }}" 
-                   class="flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-3 rounded-lg text-sm font-semibold shadow-lg">
+                   class="flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold shadow-md">
                     <i class="fas fa-plus"></i>
                     Novo Agendamento
                 </a>
