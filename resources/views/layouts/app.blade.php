@@ -73,7 +73,7 @@
     </header>
 
     @if(session('success'))
-        <div class="max-w-4xl mx-auto mt-4 px-4">
+        <div class="max-w-8xl mx-auto mt-4 px-4">
             <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
                 <i class="fas fa-check-circle text-green-600"></i>
                 <span class="text-sm text-green-800">{{ session('success') }}</span>
@@ -82,7 +82,7 @@
     @endif
 
     @if(session('error'))
-        <div class="max-w-4xl mx-auto mt-4 px-4">
+        <div class="max-w-8xl mx-auto mt-4 px-4">
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
                 <i class="fas fa-circle-exclamation text-red-600"></i>
                 <span class="text-sm text-red-800">{{ session('error') }}</span>
